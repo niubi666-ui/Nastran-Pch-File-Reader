@@ -19,9 +19,40 @@ ElementLayout PchMapping::getLayout(int elementType, const std::string& cat,bool
             layout.wordsPerPoint = 10;
             layout.wordToInfo[3] = { Component::SX, LocationType::SINGLE };
         }
+        else if (elementType == 39)
+        {
+            // Word 5 是 GRID ID，由解析器在 parseSinglePoint 中通过 getField(line, 2) 提取
+
+            layout.wordToInfo[6]  = { Component::SX,    LocationType::SINGLE }; // Normal-X
+            layout.wordToInfo[7]  = { Component::SXY,   LocationType::SINGLE }; // Shear-XY
+            layout.wordToInfo[8]  = { Component::P1,    LocationType::SINGLE }; // First Principal
+
+            layout.wordToInfo[9]  = { Component::P1X,   LocationType::SINGLE }; // P1 X-Cos
+            layout.wordToInfo[10] = { Component::P1Y,   LocationType::SINGLE }; // P1 Y-Cos
+            layout.wordToInfo[11] = { Component::P1Z,   LocationType::SINGLE }; // P1 Z-Cos
+
+            layout.wordToInfo[12] = { Component::P_AVG, LocationType::SINGLE }; // Mean Pressure
+            layout.wordToInfo[13] = { Component::OCT,   LocationType::SINGLE }; // Octahedral
+            layout.wordToInfo[14] = { Component::SY,    LocationType::SINGLE }; // Normal-Y
+
+            layout.wordToInfo[15] = { Component::SYZ,   LocationType::SINGLE }; // Shear-YZ
+            layout.wordToInfo[16] = { Component::P2,    LocationType::SINGLE }; // Second Principal
+            layout.wordToInfo[17] = { Component::P2X,   LocationType::SINGLE }; // P2 X-Cos
+
+            layout.wordToInfo[18] = { Component::P2Y,   LocationType::SINGLE }; // P2 Y-Cos
+            layout.wordToInfo[19] = { Component::P2Z,   LocationType::SINGLE }; // P2 Z-Cos
+            layout.wordToInfo[20] = { Component::SZ,    LocationType::SINGLE }; // Normal-Z
+
+            layout.wordToInfo[21] = { Component::SZX,   LocationType::SINGLE }; // Shear-ZX
+            layout.wordToInfo[22] = { Component::P3,    LocationType::SINGLE }; // Third Principal
+            layout.wordToInfo[23] = { Component::P3X,   LocationType::SINGLE }; // P3 X-Cos
+
+            layout.wordToInfo[24] = { Component::P3Y,   LocationType::SINGLE }; // P3 Y-Cos
+            layout.wordToInfo[25] = { Component::P3Z,   LocationType::SINGLE }; // P3 Z-Cos
+        }
     }
     else if (cat == "ENERGY")
-    { // 应变能
+    {
         layout.repeatCount = 1;
         layout.wordsPerPoint = 2;
         layout.wordToInfo[2] = { Component::STRAIN_ENERGY, LocationType::SINGLE };

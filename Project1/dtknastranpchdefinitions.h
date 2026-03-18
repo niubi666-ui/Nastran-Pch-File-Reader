@@ -45,7 +45,7 @@ enum class Component {
     P3Z,  // Third Principal Z-Cos
 
     // 其他合成应力
-    VONM, // Von Mises
+    VON_MISES, // Von Mises
     P_MAX, // Max Shear (表格中的第三列可能包含)
     P_AVG, // Mean Pressure
     OCT,   // Octahedral Shear
