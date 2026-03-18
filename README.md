@@ -1,1 +1,1 @@
-nastran pch file reader for plot curve
+nastran punch file reader for plot curve
