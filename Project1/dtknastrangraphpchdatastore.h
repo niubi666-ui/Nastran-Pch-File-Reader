@@ -3,20 +3,25 @@
 #include "dtknastranpchdefinitions.h"
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <set>
 
 class PchDataStore {
 public:
-    void addEntry(const PchEntry& entry);
-    void registerMetadata(int subcase, const std::string& cat, int eType);
     void finalize();
-    void getCurveData(int subcase, int eType, int pID, int gID, LocationType loc, Component comp,
-        std::vector<double>& outX, std::vector<double>& outY);
-
-    std::map<int, std::set<ResultModule>> m_uiNavigationTree;
-    
+    void addEntry(const PchEntry& e);
+    std::vector<DataPoint> getCurveData(
+        ResultCategory category,
+        int subcase,
+        int elementType,
+        int pointID,
+        int gridID,
+        LocationType location,
+        Component component);
 private:
-    std::vector<PchEntry> m_allEntries;
+    // 核心数据库：Key对应唯一曲线，Value对应曲线上的所有点
+    std::unordered_map<ResultKey, std::vector<DataPoint>, ResultKeyHasher> m_db;
+    std::map<int, std::set<ResultModule>> m_uiNavigationTree;
     bool m_isSorted = false;
 };
 #endif

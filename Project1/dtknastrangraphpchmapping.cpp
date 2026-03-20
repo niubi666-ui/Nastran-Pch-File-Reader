@@ -1,9 +1,9 @@
 #include "dtknastrangraphpchmapping.h"
 
-ElementLayout PchMapping::getLayout(int elementType, const std::string& cat,bool isComplex,bool isMagPhase)
+ElementLayout PchMapping::getLayout(int elementType, ResultCategory cat,bool isComplex,bool isMagPhase)
 {
     ElementLayout layout;
-    if (cat == "STRAIN" || cat == "STRESS")
+    if (cat == ResultCategory::STRAIN || cat == ResultCategory::STRESS)
     {
         if (elementType == 82)
         { // QUADR
@@ -55,14 +55,17 @@ ElementLayout PchMapping::getLayout(int elementType, const std::string& cat,bool
             layout.wordToInfo[25] = { Component::P3Z,   LocationType::SINGLE }; // P3 Z-Cos
         }
     }
-    else if (cat == "ENERGY")
+    else if (cat == ResultCategory::ENERGY)
     {
         layout.repeatCount = 1;
         layout.wordsPerPoint = 2;
         layout.wordToInfo[2] = { Component::STRAIN_ENERGY, LocationType::SINGLE };
         layout.wordToInfo[3] = { Component::ENERGY_PERCENT, LocationType::SINGLE };
     }
-    if (cat == "DISPLACEMENT" || cat == "VELOCITY" || cat == "ACCELERATION")
+    if (cat == ResultCategory::DISPLACEMENT
+        || cat == ResultCategory::VELOCITY
+        || cat == ResultCategory::ACCELERATION
+        || cat == ResultCategory::SPCF)
     {
         layout.repeatCount = 1;
         layout.dataStartWord = 3;

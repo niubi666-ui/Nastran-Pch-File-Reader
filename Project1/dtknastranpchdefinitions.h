@@ -2,6 +2,17 @@
 #define DTKNASTRANPCHDEFINITIONS_H
 
 #include <string>
+enum class ResultCategory : int
+{
+    UNKNOWN = 0,
+    DISPLACEMENT = 1,
+    VELOCITY = 2,
+    ACCELERATION = 3,
+    SPCF = 4,
+    STRESS = 5,
+    STRAIN = 6,
+    ENERGY = 7
+};
 
 enum class Component {
     NONE = 0,
@@ -68,6 +79,7 @@ struct PchEntry {
     int eType;
     int parentID;   // Element 或 Node ID
     int gridID;     // 关联的 Grid ID (如果没有则为0)
+    ResultCategory category;
     LocationType loc;
     Component comp;
     float xVal;     // 频率、时间或 Subcase ID
@@ -85,4 +97,33 @@ struct ResultModule {
     }
 };
 
+struct DataPoint
+{
+    float x;
+    float y;
+};
+
+struct ResultKey
+{
+    uint64_t value;
+
+    ResultKey(ResultCategory cat, int sub, int etype, int pID, int gID, LocationType loc, Component comp) {
+        // 总计 64 位分配：
+        // Category(4), Subcase(10), elementType(9), pID(20), gID(11), Loc(2), Comp(8)
+        value = (static_cast<uint64_t>(static_cast<int>(cat) & 0xF) << 60) |    // 0-15
+            (static_cast<uint64_t>(sub & 0x3FF) << 50) |  // 0-1023
+            (static_cast<uint64_t>(etype & 0x1FF) << 41) | // 0-511
+            (static_cast<uint64_t>(pID & 0xFFFFF) << 21) | // 0-1,048,575 (1百万ID)
+            (static_cast<uint64_t>(gID & 0x7FF) << 10) |   // 0-2047
+            (static_cast<uint64_t>(static_cast<int>(loc) & 0x3) << 8) |      // 0-3 (TOP, BOT, MID, CENTER)
+            (static_cast<uint64_t>(static_cast<int>(comp) & 0xFF));          // 0-255 (支持100多种分量)
+    }
+
+    bool operator==(const ResultKey& other) const { return value == other.value; }
+};
+
+struct ResultKeyHasher
+{
+    size_t operator()(const ResultKey& k) const { return static_cast<size_t>(k.value); }
+};
 #endif

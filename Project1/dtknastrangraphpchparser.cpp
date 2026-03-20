@@ -19,12 +19,13 @@ bool PchParser::parse(const std::string& filePath)
     while (std::getline(file, line)) {
         if (line.empty()) continue;
 
-        // --- 1. 识别类别 (Category) ---
-        if (line.find("$DISPLACEMENTS") != std::string::npos) m_currentCategory = "DISPLACEMENT";
-        else if (line.find("$VELOCITY") != std::string::npos) m_currentCategory = "VELOCITY";
-        else if (line.find("$ACCELERATION") != std::string::npos) m_currentCategory = "ACCELERATION";
-        else if (line.find("$ELEMENT STRAINS") != std::string::npos) m_currentCategory = "STRAIN";
-        else if (line.find("$ELEMENT STRESSES") != std::string::npos) m_currentCategory = "STRESS";
+        // --- 1. 识别类别 ---
+        if (line.find("$DISPLACEMENTS") != std::string::npos) m_currentCategory = ResultCategory::DISPLACEMENT;
+        else if (line.find("$VELOCITY") != std::string::npos) m_currentCategory = ResultCategory::VELOCITY;
+        else if (line.find("$ACCELERATION") != std::string::npos) m_currentCategory = ResultCategory::ACCELERATION;
+        else if (line.find("$ELEMENT STRAINS") != std::string::npos) m_currentCategory = ResultCategory::STRAIN;
+        else if (line.find("$ELEMENT STRESSES") != std::string::npos) m_currentCategory = ResultCategory::STRESS;
+        else if (line.find("$SPCF") != std::string::npos) m_currentCategory = ResultCategory::SPCF;
 
         // --- 2. 识别 Subcase 和 输出模式 ---
         else if (line.find("$SUBCASE ID =") != std::string::npos) {
@@ -168,11 +169,12 @@ void PchParser::parseElementData(std::ifstream& file, const std::string& firstLi
             {
                 PchEntry entry;
                 entry.subcase = m_currentSubcase;
+                entry.category = m_currentCategory;
                 entry.eType = m_currentElementType;
                 entry.parentID = m_currentParentID;
                 entry.gridID = m_currentGridID;
-                entry.xVal = (float)m_currentXVal;
-                entry.yVal = (float)m_utils.safeStod(valStr);
+                entry.xVal = (double)m_currentXVal;
+                entry.yVal = (double)m_utils.safeStod(valStr);
 
                 const auto& info = layout.wordToInfo.at(currentWordIdx);
                 entry.comp = info.comp;
